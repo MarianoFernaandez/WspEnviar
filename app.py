@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, jsonify, request
 #LIBRERIAS PARA ENVIAR MENSAJES VIA WHTSAPP
 from heyoo import WhatsApp
+
 app = Flask(__name__)
+
 #EJECUTAMOS ESTE CODIGO CUANDO SE INGRESE A LA RUTA ENVIAR
 @app.route("/enviar/", methods=["POST", "GET"])
 def enviar():
@@ -15,6 +18,7 @@ def enviar():
     textoMensaje="Hola novato saludos"
     #URL DE LA IMAGEN A ENVIAR
     urlImagen='https://i.imgur.com/r5lhxgn.png'
+
     #INICIALIZAMOS ENVIO DE MENSAJES
     mensajeWa=WhatsApp(token,idNumeroTeléfono)
     #ENVIAMOS UN MENSAJE DE TEXTO
@@ -26,4 +30,4 @@ def enviar():
 
 #INICIAMSO FLASK
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=True)

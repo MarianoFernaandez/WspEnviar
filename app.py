@@ -1,36 +1,41 @@
 # -*- coding: utf-8 -*-
-import os
 from flask import Flask, jsonify, request
 from heyoo import WhatsApp
 
 app = Flask(__name__)
 
+# EJECUTAMOS ESTE CODIGO CUANDO SE INGRESE A LA RUTA ENVIAR
 @app.route("/enviar/", methods=["POST", "GET"])
 def enviar():
-    token = os.environ.get('WHATSAPP_TOKEN')
-    idNumeroTelefono = os.environ.get('WHATSAPP_PHONE_ID')
-    telefonoEnvia = os.environ.get('WHATSAPP_RECIPIENT')
+    # TOKEN DE ACCESO DE FACEBOOK
+    token='EAA6LJPGCxHsBO9SL7SCBViAOjReFO4bID0pFKZA6vCIsABA3TcSoCH7FsjwXjnNKrRYCqvNAmePkF8GPC4IU4ZBQZAoLe7cHZAnvWDag44hB27D8ZAvGkptmrYZAXDYGK2CmyJAGppiVpOZB3FhreqZA9DslEyFomMNQQoGcQ2ZBxdZA4YZAxnxnDXx5ZBvZAGx3Xs16hZAjtIaz4HNG2jFZBPVHMmYBG5OBcXHMZCTxlrZBKoT841HsKAEIZD'
+    # IDENTIFICADOR DE NUMERO DE TELEFONO
+    idNumeroTelefono='651005361434016'
+    # TELEFONO QUE RECIBE MENSAJE (el que diste de alta en Meta)
+    telefonoEnvia='541125123781'
 
-    if not token or not idNumeroTelefono or not telefonoEnvia:
-        error_msg = "Faltan configurar variables de entorno: WHATSAPP_TOKEN, WHATSAPP_PHONE_ID, WHATSAPP_RECIPIENT."
-        print(error_msg.encode('utf-8', errors='replace').decode('utf-8'))
-        return jsonify({"error": error_msg}), 500
-
-    textoMensaje = "Hola novato saludos"
-    urlImagen = 'https://i.imgur.com/r5lhxgn.png'
+    # MENSAJE A ENVIAR
+    textoMensaje="Hola novato saludos"
+    # URL DE LA IMAGEN A ENVIAR
+    urlImagen='https://i.imgur.com/r5lhxgn.png'
 
     try:
+        # INICIALIZAMOS ENVIO DE MENSAJES
         mensajeWa = WhatsApp(token, idNumeroTelefono)
-
-        print(f"Intentando enviar mensaje a {telefonoEnvia}...".encode('utf-8', errors='replace').decode('utf-8'))
+        
+        # ENVIAMOS UN MENSAJE DE TEXTO
+        print(f"Intentando enviar mensaje a {telefonoEnvia}...")
         mensajeWa.send_message(textoMensaje, telefonoEnvia)
-
-        print(f"Intentando enviar imagen a {telefonoEnvia} desde {urlImagen}...".encode('utf-8', errors='replace').decode('utf-8'))
+        
+        # ENVIAMOS UNA IMAGEN
+        print(f"Intentando enviar imagen a {telefonoEnvia} desde {urlImagen}...")
         mensajeWa.send_image(image=urlImagen, recipient_id=telefonoEnvia)
-
-        print("Mensajes enviados exitosamente.".encode('utf-8', errors='replace').decode('utf-8'))
+        
+        print("Mensajes enviados exitosamente.")
         return "mensaje enviado exitosamente"
     except Exception as e:
-        error_msg = f"Error al enviar mensaje por WhatsApp: {e}"
-        print(error_msg.encode('utf-8', errors='replace').decode('utf-8'))
-        return jsonify({"error": error_msg}), 500
+        print(f"Error al enviar mensaje por WhatsApp: {e}")
+        return jsonify({"error": f"Error al enviar mensaje por WhatsApp: {str(e)}"}), 500
+
+if __name__ == "__main__": 
+    app.run(debug=True)

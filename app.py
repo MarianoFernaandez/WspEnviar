@@ -1,33 +1,49 @@
 # -*- coding: utf-8 -*-
+import os
 from flask import Flask, jsonify, request
-#LIBRERIAS PARA ENVIAR MENSAJES VIA WHTSAPP
 from heyoo import WhatsApp
 
 app = Flask(__name__)
 
-#EJECUTAMOS ESTE CODIGO CUANDO SE INGRESE A LA RUTA ENVIAR
+# EJECUTAMOS ESTE CODIGO CUANDO SE INGRESE A LA RUTA ENVIAR
 @app.route("/enviar/", methods=["POST", "GET"])
 def enviar():
-    #TOKEN DE ACCESO DE FACEBOOK
-    token='EAA6LJPGCxHsBOzEyjcFZB7q5XZBfBEBLCEojLBZBjpCf8Sj34lmBtUOYdD6tZBs1OymHZB2OFd5Vvq0nZB6DGZCoPec7QDl2jkvnNeXezFA9iUq89KDH8v7wvKPP2U9Tdh7XQNu7FYZBiNPuBxCnGyLZBj5yCg0Yk1dY4dqiivvuZAikz5x5EVCoQZAZBvpM7vMEVqr7V8Ns181D0QFUsJcNVDwwuyBmPpmxKAIDO9f6cNCwC2cmDwZDZD'
-    #IDENTIFICADOR DE NUMERO DE TELEFONO  <-- Comentario sin acento
-    idNumeroTelefono='651005361434016'  # <-- Variable sin acento
-    #TELEFONO QUE RECIBE (EL DE NOSOTROS QUE DIMOS DE ALTA) <-- Comentario sin acento
-    telefonoEnvia='541125123781'      # <-- Variable sin acento
-    #MENSAJE A ENVIAR
+    # Obtener credenciales de variables de entorno
+    # TOKEN DE ACCESO DE FACEBOOK
+    token = os.environ.get('WHATSAPP_TOKEN')
+    # IDENTIFICADOR DE NUMERO DE TELEFONO
+    idNumeroTelefono = os.environ.get('WHATSAPP_PHONE_ID')
+    # TELEFONO QUE RECIBE MENSAJE (el que diste de alta en Meta)
+    telefonoEnvia = os.environ.get('WHATSAPP_RECIPIENT')
+
+    # Validacion: Asegurarse que las variables de entorno estan configuradas
+    if not token or not idNumeroTelefono or not telefonoEnvia:
+        error_msg = "Faltan configurar variables de entorno: WHATSAPP_TOKEN, WHATSAPP_PHONE_ID, WHATSAPP_RECIPIENT."
+        print(f"ERROR: {error_msg}")
+        return jsonify({"error": error_msg}), 500
+
+    # MENSAJE A ENVIAR (estos pueden seguir hardcodeados o hacerse dinamicos en el futuro)
     textoMensaje="Hola novato saludos"
-    #URL DE LA IMAGEN A ENVIAR
+    # URL DE LA IMAGEN A ENVIAR
     urlImagen='https://i.imgur.com/r5lhxgn.png'
 
-    #INICIALIZAMOS ENVIO DE MENSAJES
-    mensajeWa=WhatsApp(token, idNumeroTelefono) # <-- Uso de la variable sin acento
-    #ENVIAMOS UN MENSAJE DE TEXTO
-    mensajeWa.send_message(textoMensaje, telefonoEnvia)
-    #ENVIAMOS UNA IMAGEN
-    mensajeWa.send_image(image=urlImagen, recipient_id=telefonoEnvia)
-    return "mensaje enviado exitosamente"
+    try:
+        # INICIALIZAMOS ENVIO DE MENSAJES
+        mensajeWa = WhatsApp(token, idNumeroTelefono)
+        
+        # ENVIAMOS UN MENSAJE DE TEXTO
+        print(f"Intentando enviar mensaje a {telefonoEnvia}...")
+        mensajeWa.send_message(textoMensaje, telefonoEnvia)
+        
+        # ENVIAMOS UNA IMAGEN
+        print(f"Intentando enviar imagen a {telefonoEnvia} desde {urlImagen}...")
+        mensajeWa.send_image(image=urlImagen, recipient_id=telefonoEnvia)
+        
+        print("Mensajes enviados exitosamente.")
+        return "mensaje enviado exitosamente"
+    except Exception as e:
+        print(f"Error al enviar mensaje por WhatsApp: {e}")
+        return jsonify({"error": f"Error al enviar mensaje por WhatsApp: {str(e)}"}), 500
 
-
-#INICIAMOS FLASK
-if __name__ == "__main__":
-    app.run(debug=True)
+# No se necesita el bloque if __name__ == "__main__": app.run(debug=True) en produccion
+# Gunicorn se encargara de iniciar la aplicacion.

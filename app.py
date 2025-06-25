@@ -4,6 +4,12 @@ from heyoo import WhatsApp
 
 app = Flask(__name__)
 
+@app.after_request
+def set_charset(response):
+    response.headers["Content-Type"] = "application/json; charset=utf-8"
+    return response
+
+
 # EJECUTAMOS ESTE CODIGO CUANDO SE INGRESE A LA RUTA ENVIAR
 @app.route("/enviar/", methods=["POST", "GET"])
 def enviar():

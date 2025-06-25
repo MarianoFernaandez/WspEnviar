@@ -49,4 +49,9 @@ def enviar():
 
 
 if __name__ == '__main__':
+    # Ejecutar servidor
     app.run(debug=True)
+
+    # Enviar mensaje cuando arranca
+    with app.app_context():
+        enviar()

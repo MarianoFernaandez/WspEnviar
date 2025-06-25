@@ -3,8 +3,8 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-TOKEN = 'TU_TOKEN_DE_ACCESO'
-PHONE_NUMBER_ID = 'TU_PHONE_NUMBER_ID'
+TOKEN = 'EAA6LJPGCxHsBOxXVnSMdvwf7XKDnLSmEXdYy2pTdWEVntEEJD8OZCuMoO7wIrBSiSQfLYUlinQBEFsxZBs4coFGr1BGE5jZBFmOEVTIHhoEPoFp1GAFxAdOdoC2ATvenFb7VKcCLZC0ehAv0tqPnyBCifuK8AB5sT4puZAiGZC5VCy7eNBpCZCUaggJJAnZAymFWjLdKZBnxpX62tUZAcq5QQWrdj2XrV5qfUB2McJo4MyGMuEak4ZD'
+PHONE_NUMBER_ID = '651005361434016'
 WHATSAPP_URL = f'https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages'
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",

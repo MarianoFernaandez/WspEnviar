@@ -1,6 +1,10 @@
-# -*- coding: utf-8 -*-
+
 from flask import Flask, jsonify, request
 from heyoo import WhatsApp
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 app = Flask(__name__)
 

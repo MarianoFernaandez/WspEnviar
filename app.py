@@ -30,14 +30,14 @@ def enviar():
         mensajeWa = WhatsApp(token, idNumeroTelefono)
         
         # ENVIAMOS UN MENSAJE DE TEXTO
-        print(f"Intentando enviar mensaje a {telefonoEnvia}...")
+        print(f"Intentando enviar mensaje a {telefonoEnvia}")
         mensajeWa.send_message(textoMensaje, telefonoEnvia)
         
         # ENVIAMOS UNA IMAGEN
-        print(f"Intentando enviar imagen a {telefonoEnvia} desde {urlImagen}...")
+        print(f"Intentando enviar imagen a {telefonoEnvia} desde {urlImagen}")
         mensajeWa.send_image(image=urlImagen, recipient_id=telefonoEnvia)
         
-        print("Mensajes enviados exitosamente.")
+        print("Mensajes enviados exitosamente")
         return "mensaje enviado exitosamente"
     except Exception as e:
         print(f"Error al enviar mensaje por WhatsApp: {e}")

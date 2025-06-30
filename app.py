@@ -1,41 +1,97 @@
-# -*- coding: utf-8 -*-
-from flask import Flask, jsonify, request
-from heyoo import WhatsApp
+# import requests
+# from flask import Flask, request, jsonify
+
+# app = Flask(__name__)
+
+# TOKEN = 'EAA6LJPGCxHsBOxXVnSMdvwf7XKDnLSmEXdYy2pTdWEVntEEJD8OZCuMoO7wIrBSiSQfLYUlinQBEFsxZBs4coFGr1BGE5jZBFmOEVTIHhoEPoFp1GAFxAdOdoC2ATvenFb7VKcCLZC0ehAv0tqPnyBCifuK8AB5sT4puZAiGZC5VCy7eNBpCZCUaggJJAnZAymFWjLdKZBnxpX62tUZAcq5QQWrdj2XrV5qfUB2McJo4MyGMuEak4ZD'
+# PHONE_NUMBER_ID = '651005361434016'
+# WHATSAPP_URL = f'https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages'
+# HEADERS = {
+#     "Authorization": f"Bearer {TOKEN}",
+#     "Content-Type": "application/json"
+# }
+
+# @app.route('/enviar/', methods=['POST', 'GET'])
+# def enviar():
+#     telefono = '541125123781'
+#     texto = 'Hola novato saludos'
+
+#     try:
+#         # Enviar texto
+#         data_texto = {
+#             "messaging_product": "whatsapp",
+#             "to": telefono,
+#             "type": "text",
+#             "text": {
+#                 "body": texto
+#             }
+#         }
+#         response_texto = requests.post(WHATSAPP_URL, headers=HEADERS, json=data_texto)
+#         response_texto.raise_for_status()
+
+#         # Enviar imagen
+#         data_imagen = {
+#             "messaging_product": "whatsapp",
+#             "to": telefono,
+#             "type": "image",
+#             "image": {
+#                 "link": imagen_url
+#             }
+#         }
+#         response_imagen = requests.post(WHATSAPP_URL, headers=HEADERS, json=data_imagen)
+#         response_imagen.raise_for_status()
+
+#         return jsonify({"mensaje": "Mensajes enviados exitosamente"}), 200
+
+#     except requests.exceptions.RequestException as e:
+#         return jsonify({"error": str(e)}), 500
+
+
+# if __name__ == '__main__':
+#     # Ejecutar servidor
+#     app.run(debug=True)
+
+#     # Enviar mensaje cuando arranca
+#     with app.app_context():
+#         enviar()
+
+from flask import Flask, request, jsonify
+import requests
 
 app = Flask(__name__)
 
-# EJECUTAMOS ESTE CODIGO CUANDO SE INGRESE A LA RUTA ENVIAR
-@app.route("/enviar/", methods=["POST", "GET"])
+TOKEN = 'EAA6LJPGCxHsBOxXVnSMdvwf7XKDnLSmEXdYy2pTdWEVntEEJD8OZCuMoO7wIrBSiSQfLYUlinQBEFsxZBs4coFGr1BGE5jZBFmOEVTIHhoEPoFp1GAFxAdOdoC2ATvenFb7VKcCLZC0ehAv0tqPnyBCifuK8AB5sT4puZAiGZC5VCy7eNBpCZCUaggJJAnZAymFWjLdKZBnxpX62tUZAcq5QQWrdj2XrV5qfUB2McJo4MyGMuEak4ZD'
+PHONE_NUMBER_ID = '651005361434016'
+WHATSAPP_URL = f'https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages'
+HEADERS = {
+    "Authorization": f"Bearer {TOKEN}",
+    "Content-Type": "application/json"
+}
+
+@app.route('/enviar/', methods=['POST'])
 def enviar():
-    # TOKEN DE ACCESO DE FACEBOOK
-    token='EAA6LJPGCxHsBO9SL7SCBViAOjReFO4bID0pFKZA6vCIsABA3TcSoCH7FsjwXjnNKrRYCqvNAmePkF8GPC4IU4ZBQZAoLe7cHZAnvWDag44hB27D8ZAvGkptmrYZAXDYGK2CmyJAGppiVpOZB3FhreqZA9DslEyFomMNQQoGcQ2ZBxdZA4YZAxnxnDXx5ZBvZAGx3Xs16hZAjtIaz4HNG2jFZBPVHMmYBG5OBcXHMZCTxlrZBKoT841HsKAEIZD'
-    # IDENTIFICADOR DE NUMERO DE TELEFONO
-    idNumeroTelefono='651005361434016'
-    # TELEFONO QUE RECIBE MENSAJE (el que diste de alta en Meta)
-    telefonoEnvia='541125123781'
-
-    # MENSAJE A ENVIAR
-    textoMensaje="Hola novato saludos"
-    # URL DE LA IMAGEN A ENVIAR
-    urlImagen='https://i.imgur.com/r5lhxgn.png'
-
     try:
-        # INICIALIZAMOS ENVIO DE MENSAJES
-        mensajeWa = WhatsApp(token, idNumeroTelefono)
-        
-        # ENVIAMOS UN MENSAJE DE TEXTO
-        print(f"Intentando enviar mensaje a {telefonoEnvia}...")
-        mensajeWa.send_message(textoMensaje, telefonoEnvia)
-        
-        # ENVIAMOS UNA IMAGEN
-        print(f"Intentando enviar imagen a {telefonoEnvia} desde {urlImagen}...")
-        mensajeWa.send_image(image=urlImagen, recipient_id=telefonoEnvia)
-        
-        print("Mensajes enviados exitosamente.")
-        return "mensaje enviado exitosamente"
-    except Exception as e:
-        print(f"Error al enviar mensaje por WhatsApp: {e}")
-        return jsonify({"error": f"Error al enviar mensaje por WhatsApp: {str(e)}"}), 500
+        data = request.get_json()
+        mensaje = data.get("question", "Hola desde la API")  # mensaje por defecto si no se envía nada
+        telefono = '541125123781'  # Número fijo o configurable si querés
 
-if __name__ == "__main__": 
+        # Enviar texto por WhatsApp
+        data_texto = {
+            "messaging_product": "whatsapp",
+            "to": telefono,
+            "type": "text",
+            "text": {
+                "body": mensaje
+            }
+        }
+
+        response = requests.post(WHATSAPP_URL, headers=HEADERS, json=data_texto)
+        response.raise_for_status()
+
+        return jsonify({"status": "Mensaje enviado correctamente", "mensaje": mensaje}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
     app.run(debug=True)

@@ -62,7 +62,7 @@ app = Flask(__name__)
 
 TOKEN = 'EAA6LJPGCxHsBO80Ofqvyb9ytX7BHsHYqLp7wUYUV1vM2tsMnQMa6HFEM3AET2UUur1e03cX3llbG0IQcu8vcRJjYQepj7gG5fdapOtr8P9EjQWDflsQDcFk3sbs87ZCiPUv3OqrC3N15RJTPKInLVjeZAOsnX5FL6DHuOai5CBztVZCXonhEOexCfOJDxwBBl3i9lKizzdAqri4G061Ojqd2qdZC811ejESVLA3H3j9eLV0ZD'
 PHONE_NUMBER_ID = '651005361434016'
-WHATSAPP_URL = f'https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages'
+WHATSAPP_URL = f'https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages'
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
     "Content-Type": "application/json"

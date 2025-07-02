@@ -1,66 +1,9 @@
-# import requests
-# from flask import Flask, request, jsonify
-
-# app = Flask(__name__)
-
-# TOKEN = 'EAA6LJPGCxHsBOxXVnSMdvwf7XKDnLSmEXdYy2pTdWEVntEEJD8OZCuMoO7wIrBSiSQfLYUlinQBEFsxZBs4coFGr1BGE5jZBFmOEVTIHhoEPoFp1GAFxAdOdoC2ATvenFb7VKcCLZC0ehAv0tqPnyBCifuK8AB5sT4puZAiGZC5VCy7eNBpCZCUaggJJAnZAymFWjLdKZBnxpX62tUZAcq5QQWrdj2XrV5qfUB2McJo4MyGMuEak4ZD'
-# PHONE_NUMBER_ID = '651005361434016'
-# WHATSAPP_URL = f'https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages'
-# HEADERS = {
-#     "Authorization": f"Bearer {TOKEN}",
-#     "Content-Type": "application/json"
-# }
-
-# @app.route('/enviar/', methods=['POST', 'GET'])
-# def enviar():
-#     telefono = '541125123781'
-#     texto = 'Hola novato saludos'
-
-#     try:
-#         # Enviar texto
-#         data_texto = {
-#             "messaging_product": "whatsapp",
-#             "to": telefono,
-#             "type": "text",
-#             "text": {
-#                 "body": texto
-#             }
-#         }
-#         response_texto = requests.post(WHATSAPP_URL, headers=HEADERS, json=data_texto)
-#         response_texto.raise_for_status()
-
-#         # Enviar imagen
-#         data_imagen = {
-#             "messaging_product": "whatsapp",
-#             "to": telefono,
-#             "type": "image",
-#             "image": {
-#                 "link": imagen_url
-#             }
-#         }
-#         response_imagen = requests.post(WHATSAPP_URL, headers=HEADERS, json=data_imagen)
-#         response_imagen.raise_for_status()
-
-#         return jsonify({"mensaje": "Mensajes enviados exitosamente"}), 200
-
-#     except requests.exceptions.RequestException as e:
-#         return jsonify({"error": str(e)}), 500
-
-
-# if __name__ == '__main__':
-#     # Ejecutar servidor
-#     app.run(debug=True)
-
-#     # Enviar mensaje cuando arranca
-#     with app.app_context():
-#         enviar()
-
 from flask import Flask, request, jsonify
 import requests
 
 app = Flask(__name__)
 
-TOKEN = 'EAA6LJPGCxHsBO80Ofqvyb9ytX7BHsHYqLp7wUYUV1vM2tsMnQMa6HFEM3AET2UUur1e03cX3llbG0IQcu8vcRJjYQepj7gG5fdapOtr8P9EjQWDflsQDcFk3sbs87ZCiPUv3OqrC3N15RJTPKInLVjeZAOsnX5FL6DHuOai5CBztVZCXonhEOexCfOJDxwBBl3i9lKizzdAqri4G061Ojqd2qdZC811ejESVLA3H3j9eLV0ZD'
+TOKEN = 'EAA6LJPGCxHsBOyZCZCVML9MNkGGZCSYoRAHVQ28st1ZAUSX6zNJ5MA9c52fvsPLZBjLvBCkRJQwtzJ1umdE8zcsONkAAD5iS4MVO2NPtGifhGZAolend1ZAn6GnLGYr1GcemqFZBLRaBx8v3VgvnDUak8adFYLZCBAQLEKhEV0G6OjIcHZBj9oeLFJoQZA3QMwUZC6R42i9xIO6vZAiaJYQiR68h3PPcj45vh5xqbUnMITZBX3FJIZBBQZDZD'
 PHONE_NUMBER_ID = '651005361434016'
 WHATSAPP_URL = f'https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages'
 HEADERS = {
@@ -71,12 +14,14 @@ HEADERS = {
 @app.route('/enviar/', methods=['POST'])
 def enviar():
     try:
-        data = request.get_json()
-        mensaje = data.get("question", "Hola desde la API")  # mensaje por defecto si no se envía nada
-        telefono = '541125123781'  # Número fijo o configurable si querés
+        if not request.is_json:
+            return jsonify({"error": "La solicitud debe contener JSON"}), 400
 
-        # Enviar texto por WhatsApp
-        data_texto = {
+        data = request.get_json()
+        mensaje = data.get("question", "Hola desde la API")  # mensaje por defecto
+        telefono = '541125123781'  # Número fijo
+
+        payload = {
             "messaging_product": "whatsapp",
             "to": telefono,
             "type": "text",
@@ -85,8 +30,10 @@ def enviar():
             }
         }
 
-        response = requests.post(WHATSAPP_URL, headers=HEADERS, json=data_texto)
-        response.raise_for_status()
+        response = requests.post(WHATSAPP_URL, headers=HEADERS, json=payload)
+
+        if response.status_code != 200:
+            return jsonify({"error": "Error al enviar mensaje", "detalle": response.json()}), 500
 
         return jsonify({"status": "Mensaje enviado correctamente", "mensaje": mensaje}), 200
 

@@ -18,7 +18,8 @@ def enviar():
             return jsonify({"error": "La solicitud debe contener JSON"}), 400
 
         data = request.get_json()
-        mensaje = data.get("question", "Hola desde la API")  # mensaje por defecto
+        texto =  data.get("mensaje") 
+        #mensaje = data.get("question", texto)  # mensaje por defecto
         telefono = '541125123781'  # Número fijo
 
         payload = {
@@ -26,7 +27,7 @@ def enviar():
             "to": telefono,
             "type": "text",
             "text": {
-                "body": mensaje
+                "body": texto
             }
         }
 
@@ -35,7 +36,7 @@ def enviar():
         if response.status_code != 200:
             return jsonify({"error": "Error al enviar mensaje", "detalle": response.json()}), 500
 
-        return jsonify({"status": "Mensaje enviado correctamente", "mensaje": mensaje}), 200
+        return jsonify({"status": "Mensaje enviado correctamente", "mensaje": texto}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
